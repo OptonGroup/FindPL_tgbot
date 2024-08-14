@@ -42,15 +42,15 @@ class db_connect(object):
 
     # users
     def get_users(self, tg_id=None, username=None, town=None, sub_active=False):
-        request = f'''SELECT * FROM users WHERE id'''
+        request = f'''SELECT * FROM users WHERE id '''
         if tg_id:
-            request += f'''AND tg_id = {tg_id}'''
+            request += f'''AND tg_id = {tg_id} '''
         if username:
-            request += f'''AND username = {username}'''
+            request += f'''AND username = '{username}' '''
         if town:
-            request += f'''AND town = {town}'''
+            request += f'''AND town_search = '{town}' '''
         if sub_active:
-            request += f'''AND sub_end >= NOW()'''
+            request += f'''AND sub_end >= datetime('now') '''
         self.cursor.execute(request)
         return self.cursor.fetchall()
 
@@ -77,7 +77,7 @@ class db_connect(object):
     def user_renew_subscription(self, tg_id):
         self.cursor.execute(f'''
             UPDATE users
-            SET sub_start = datetime('now','-12 hour'), 
+            SET sub_start = datetime('now'),
                 sub_end = datetime('now','+7 day')
             WHERE tg_id = {tg_id};
         ''')

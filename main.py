@@ -5,16 +5,16 @@ import sys
 from dblogic.database import database
 from aparserlogic.avitoparser import AvitoParser
 from botlogic.tg_bot import start_bot
-from botlogic import functions
+from botlogic.functions import functions
 
 
 async def run_parser():
     while True:
-        await asyncio.sleep(10)
+        await asyncio.sleep(120)
         for town in ['moskva', 'sankt-peterburg', 'krasnodar', 'ekaterinburg']:
             new_ads = AvitoParser.parse_by_town(town=town)
             logging.info(f'Get {len(new_ads)} new ads from {town}')
-            # await functions.send_ads(ads=new_ads, town=town)
+            await functions.send_ads(ads=new_ads, town=town)
 
 
 def main():

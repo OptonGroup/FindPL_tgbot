@@ -23,7 +23,7 @@ class AvitoParserClass(object):
             'profile.managed_default_content_settings.stylesheets': 2
         }
 
-        self.browser = uc.Chrome(options=options, headless=True,use_subprocess=False)
+        self.browser = uc.Chrome(options=options, headless=True)
         self.browser.execute_cdp_cmd(
             'Network.setBlockedURLs', {'urls': [
                 '*.js',
@@ -60,10 +60,17 @@ class AvitoParserClass(object):
 
         new_ads = []
         for ad in ads:
-            ad_id = ad['id']
-            if not database.is_ad_in_database(ad_id=ad_id):
-                database.add_ad(ad_id=ad_id, town=town)
-                new_ads.append(
-                    f'''{ad['title']}\n📆 {datetime.utcfromtimestamp(ad['sortTimeStamp']//1000).strftime('%Y-%m-%d %H:%M:%S')}\n💵 {ad['priceDetailed']['fullString']}\n\nhttps://www.avito.ru/{ad['id']}\n🏠 {ad['coords']['address_user']}'''
-                )
+            try:
+                ad_id = ad['id']
+                if not database.is_ad_in_database(ad_id=ad_id):
+                    database.add_ad(ad_id=ad_id, town=town)
+                    new_ads.append(
+                        f'''{ad['title']}\n📆 {datetime.utcfromtimestamp(ad['sortTimeStamp']//1000).strftime('%Y-%m-%d %H:%M:%S')}\n💵 {ad['priceDetailed']['fullString']}\n\nhttps://www.avito.ru/{ad['id']}\n🏠 {ad['coords']['address_user']}'''
+                    )
+            except:
+                pass
         return new_ads
+    
+if __name__ == '__main__':
+    parser = AvitoParserClass()
+    print(len(parser.parse_by_town(town='moskva')))
