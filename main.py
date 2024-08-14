@@ -4,7 +4,7 @@ import sys
 
 from dblogic.database import database
 from aparserlogic.avitoparser import AvitoParser
-from tg_bot import start_bot
+from botlogic.tg_bot import start_bot
 from botlogic import functions
 
 
