@@ -40,6 +40,7 @@ bin/pip install -r requirements.txt
 chmod 664 database.db
 nohup bin/python main.py &
 ps ax | grep main.py
+kill -9 ...
 
 sudo -i
 sync; echo 1 > /proc/sys/vm/drop_caches
