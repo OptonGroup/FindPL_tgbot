@@ -37,8 +37,8 @@ cd FindPL_tgbot
 python3 -m venv .
 bin/pip install -r requirements.txt
 
-bin/python main.py
-
+bin/python main.py &
+ps ax | grep main.py
 
 sudo -i
 sync; echo 1 > /proc/sys/vm/drop_caches

@@ -21,9 +21,9 @@ async def run_parser():
 
 def main():
     loop = asyncio.get_event_loop()
-    # task1 = loop.create_task(run_parser())
+    task1 = loop.create_task(run_parser())
     task2 = loop.create_task(start_bot())
-    # loop.run_until_complete(task1)
+    loop.run_until_complete(task1)
     loop.run_until_complete(task2)
 
 

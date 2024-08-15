@@ -177,3 +177,41 @@ async def get_users_handler(message: Message, state: FSMContext) -> None:
         file.write(tabulate(data, headers=head, tablefmt="grid"))
     document = FSInputFile('files/users_info.txt')
     await message.answer_document(document)
+    document = ''
+    
+
+async def get_logs_handler(message: Message, state: FSMContext) -> None:
+    await identification_user(message=message, state=state)
+    
+    user_info = await state.get_data()
+    if not user_info['is_admin']:
+        return
+    
+    document = FSInputFile('info.log')
+    await message.answer_document(document)
+    document = ''
+    
+    
+async def give_sub_handler(message: Message, state: FSMContext, command: CommandObject) -> None:
+    await identification_user(message=message, state=state)
+    
+    user_info = await state.get_data()
+    if not user_info['is_admin']:
+        return
+    
+    user_id = command.args
+    if not user_id:
+        await message.answer(
+            'Необходимо ввести [🔑ID] пользователя. Напимер /get_user_by_id 123456789'
+        )
+        return
+    
+    try:
+        database.user_renew_subscription(tg_id=user_id)
+        await message.answer(
+            f'Продлили подписку у пользователя id={user_id} на неделю'
+        )
+    except:
+        await message.answer(
+            f'Не получилось продлить подписку у пользователя id={user_id}'
+        )
