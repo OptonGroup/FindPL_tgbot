@@ -69,13 +69,15 @@ class AvitoParserClass(object):
         for ad in ads:
             try:
                 ad_id = ad['id']
-                if not database.is_ad_in_database(ad_id=ad_id):
-                    database.add_ad(ad_id=ad_id, town=town)
-                    new_ads.append(
-                        f'''{ad['title']}\n📆 {datetime.utcfromtimestamp(ad['sortTimeStamp']//1000).strftime('%Y-%m-%d %H:%M:%S')}\n💵 {ad['priceDetailed']['fullString']}\n\nhttps://www.avito.ru/{ad['id']}\n🏠 {ad['coords']['address_user']}'''
-                    )
             except:
-                pass
+                continue
+            
+            if not database.is_ad_in_database(ad_id=ad_id):
+                database.add_ad(ad_id=ad_id, town=town)
+                new_ads.append(
+                    f'''{ad['title']}\n📆 {datetime.utcfromtimestamp(ad['sortTimeStamp']//1000).strftime('%Y-%m-%d %H:%M:%S')}\n💵 {ad['priceDetailed']['fullString']}\n\nhttps://www.avito.ru/{ad['id']}\n🏠 {ad['coords']['address_user']}'''
+                )
+           
         return new_ads
     
 if __name__ == '__main__':

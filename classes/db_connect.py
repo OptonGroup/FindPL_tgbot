@@ -4,7 +4,7 @@ import datetime
 
 class db_connect(object):
     def __init__(self):
-        self.base_connection = sqlite3.connect('database.db')
+        self.base_connection = sqlite3.connect('database.db?mode=rw')
         self.cursor = self.base_connection.cursor()
         self.create_table()
 
