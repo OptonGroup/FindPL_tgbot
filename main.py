@@ -15,7 +15,12 @@ async def run_parser():
             new_ads = await AvitoParser.parse_by_town(town=town)
             logging.info(f'Get {len(new_ads)} new ads from {town}')
             if num_of_iter:
-                await functions.send_ads(ads=new_ads, town=town)
+                try:
+                    await functions.send_ads(ads=new_ads, town=town)
+                except:
+                    pass
+            if num_of_iter % 100 == 0:
+                database.delete_ads_with_time_more_12hours()
         num_of_iter += 1
         await asyncio.sleep(120)
 
