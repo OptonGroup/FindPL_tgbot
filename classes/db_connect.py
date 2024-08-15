@@ -60,6 +60,11 @@ class db_connect(object):
         return self.cursor.fetchone()
     
     
+    def get_user_by_username(self, username):
+        self.cursor.execute(f'''SELECT * FROM users WHERE username = '{username}' ''')
+        return self.cursor.fetchone()
+    
+    
     def add_user(self, tg_id, username):
         self.cursor.execute(f'''
             INSERT INTO users (tg_id, username, sub_start, sub_end)
@@ -74,11 +79,12 @@ class db_connect(object):
         return True if self.get_user_by_tg_id(tg_id) else False
     
     
-    def user_renew_subscription(self, tg_id):
+    def user_renew_subscription(self, tg_id, amount):
         self.cursor.execute(f'''
             UPDATE users
             SET sub_start = datetime('now'),
-                sub_end = datetime('now','+7 day')
+                sub_end = datetime('now','+7 day'),
+                pay_money = pay_money + {amount}
             WHERE tg_id = {tg_id};
         ''')
         self.base_connection.commit()
@@ -93,6 +99,16 @@ class db_connect(object):
         ''')
         self.base_connection.commit()
         return self.get_user_by_tg_id(tg_id=tg_id)
+    
+
+    def user_set_admin(self, tg_id, is_admin=1):
+        self.cursor.execute(f'''
+            UPDATE users
+            SET is_admin = {is_admin}
+            WHERE tg_id = {tg_id};
+        ''')
+        self.base_connection.commit()
+        return self.get_user_by_tg_id(tg_id=tg_id)    
     
         
     # ads

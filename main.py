@@ -9,20 +9,21 @@ from botlogic.functions import functions
 
 
 async def run_parser():
+    num_of_iter = 0
     while True:
-        await asyncio.sleep(120)
         for town in ['moskva', 'sankt-peterburg', 'krasnodar', 'ekaterinburg']:
-            new_ads = AvitoParser.parse_by_town(town=town)
+            new_ads = await AvitoParser.parse_by_town(town=town)
             logging.info(f'Get {len(new_ads)} new ads from {town}')
-            await functions.send_ads(ads=new_ads, town=town)
-
+            if num_of_iter:
+                await functions.send_ads(ads=new_ads, town=town)
+        num_of_iter += 1
+        await asyncio.sleep(120)
 
 def main():
     loop = asyncio.get_event_loop()
-    
-    task1 = loop.create_task(run_parser())
+    # task1 = loop.create_task(run_parser())
     task2 = loop.create_task(start_bot())
-    loop.run_until_complete(task1)
+    # loop.run_until_complete(task1)
     loop.run_until_complete(task2)
 
 

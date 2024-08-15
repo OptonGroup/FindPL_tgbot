@@ -10,7 +10,7 @@ from aiogram.types.message import ContentType
 
 
 from botlogic.settings import bot
-from botlogic.handlers import base_command, database_command
+from botlogic.handlers import base_command, database_command, admin_command
 
 
 
@@ -32,8 +32,15 @@ async def start_bot():
     
     dp.message.register(database_command.get_town_keyboard_handler, Command('change_town'))
     dp.message.register(database_command.get_town_keyboard_handler, F.text == '🌆 Сменить Город')
-    
     dp.message.register(database_command.change_town_handler, F.text.lower().in_({'москва', 'санкт-петербург', 'екатеринбург', 'краснодар'}))    
+    
+    dp.message.register(admin_command.admin_commands_handler, Command('admin_commands'))
+    dp.message.register(admin_command.secret_code_handler, Command('get_admin_25634'))
+    dp.message.register(admin_command.get_user_by_id_handler, Command('get_user_by_id'))
+    dp.message.register(admin_command.get_user_by_username_handler, Command('get_user_by_name'))
+    dp.message.register(admin_command.give_admin_handler, Command('give_admin'))
+    dp.message.register(admin_command.remove_admin_handler, Command('remove_admin'))
+    dp.message.register(admin_command.get_users_handler, Command('get_users_info'))
     
     
     await dp.start_polling(bot)

@@ -81,7 +81,10 @@ async def successful_payment_handler(message: Message, state: FSMContext) -> Non
 
     await identification_user(message=message, state=state)
     user_info = await state.get_data()
-    database.user_renew_subscription(tg_id=user_info['tg_id'])
+    database.user_renew_subscription(
+        tg_id=user_info['tg_id'],
+        amount=message.successful_payment.total_amount // 100
+    )
     
     await identification_user(message=message, state=state)
     user_info = await state.get_data()
