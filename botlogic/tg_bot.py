@@ -41,8 +41,9 @@ async def start_bot():
     dp.message.register(admin_command.give_admin_handler, Command('give_admin'))
     dp.message.register(admin_command.remove_admin_handler, Command('remove_admin'))
     dp.message.register(admin_command.get_users_handler, Command('get_users_info'))
-    
-    
+    dp.message.register(admin_command.get_logs_handler, Command('get_logs'))
+    dp.message.register(admin_command.give_sub_handler, Command('give_sub'))
+        
     await dp.start_polling(bot)
 
 
