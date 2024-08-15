@@ -46,4 +46,4 @@ async def get_info_handler(message: Message, state: FSMContext) -> None:
     
 
 async def support_handler(message: Message, state: FSMContext) -> None:
-    await message.answer('@mxoffline', reply_markup=keyboard)
+    await message.answer('@s1cptn', reply_markup=keyboard)
