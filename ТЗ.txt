@@ -17,32 +17,5 @@ https://…
 • возможность будущих обновлений по типу добавления новых городов и разделов по типу «продажа», парсинг другого сайта
 
 
-бюджет: 13700₽
+бюджет: 14000₽
 срок: 11 дней
-
-
-
-apt-get update
-apt install python3-pip
-apt install python3.12-venv
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt install ./google-chrome-stable_current_amd64.deb
-
-
-git config --global user.name "OptonGroup"
-git config --global user.email "maxsimakov123@yandex.ru"
-git clone https://github.com/OptonGroup/FindPL_tgbot.git
-
-cd FindPL_tgbot
-python3 -m venv .
-bin/pip install -r requirements.txt
-
-chmod 664 database.db
-nohup bin/python main.py &
-ps ax | grep main.py
-kill -9 ...
-
-sudo -i
-sync; echo 1 > /proc/sys/vm/drop_caches
-sync; echo 2 > /proc/sys/vm/drop_caches
-sync; echo 3 > /proc/sys/vm/drop_caches

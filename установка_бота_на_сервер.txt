@@ -1,0 +1,15 @@
+apt-get update
+apt install python3-pip
+apt install python3.12-venv
+
+git clone https://github.com/OptonGroup/FindPL_tgbot.git
+
+cd FindPL_tgbot
+python3 -m venv .
+bin/pip install -r requirements.txt
+chmod 664 database.db
+
+sudo -i
+sync; echo 1 > /proc/sys/vm/drop_caches
+sync; echo 2 > /proc/sys/vm/drop_caches
+sync; echo 3 > /proc/sys/vm/drop_caches

@@ -1,0 +1,3 @@
+nohup bin/python main.py &
+ps ax | grep main.py
+kill -9 [Номер процесса]
