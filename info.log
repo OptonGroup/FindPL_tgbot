@@ -1,0 +1,15 @@
+[2024-08-22 01:07:49,923] INFO Start polling
+[2024-08-22 01:07:50,171] INFO Run polling for bot @findpl_bot id=6871227651 - 'FindPL'
+[2024-08-22 01:07:54,129] INFO Get 50 new ads from moskva
+[2024-08-22 01:07:57,965] INFO Get 50 new ads from sankt-peterburg
+[2024-08-22 01:08:01,683] INFO Get 50 new ads from krasnodar
+[2024-08-22 01:08:05,515] INFO Get 50 new ads from ekaterinburg
+[2024-08-22 01:08:17,340] INFO Update id=221559603 is handled. Duration 0 ms by bot id=6871227651
+[2024-08-22 01:08:23,041] INFO Update id=221559604 is handled. Duration 406 ms by bot id=6871227651
+[2024-08-22 01:10:09,204] INFO Get 1 new ads from moskva
+[2024-08-22 01:10:13,531] INFO Get 0 new ads from sankt-peterburg
+[2024-08-22 01:10:17,143] INFO Get 0 new ads from krasnodar
+[2024-08-22 01:10:20,748] INFO Get 0 new ads from ekaterinburg
+[2024-08-22 01:10:44,282] INFO Update id=221559605 is handled. Duration 250 ms by bot id=6871227651
+[2024-08-22 01:10:46,272] INFO Update id=221559606 is handled. Duration 93 ms by bot id=6871227651
+[2024-08-22 01:10:56,375] INFO Update id=221559607 is handled. Duration 141 ms by bot id=6871227651

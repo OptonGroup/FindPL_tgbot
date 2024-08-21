@@ -16,32 +16,7 @@ from dblogic.database import database
 
 class AvitoParserClass(object):
     def __init__(self):
-        options = uc.ChromeOptions()
-        options.add_argument("--disable-blink-features=AutomationControlled")
-        options.add_argument("--disable-extensions")
-        options.add_argument("--autoplay-policy=no-user-gesture-required")
-        options.experimental_options["prefs"] = {
-            'profile.managed_default_content_settings.images': 2,
-            'profile.managed_default_content_settings.mixed_script': 2,
-            'profile.managed_default_content_settings.media_stream': 2,
-            'profile.managed_default_content_settings.stylesheets': 2
-        }
-
-        self.browser = uc.Chrome(options=options, headless=True)
-        self.browser.execute_cdp_cmd(
-            'Network.setBlockedURLs', {'urls': [
-                '*.js',
-                '*.css',
-                '*.png',
-            ]})
-        self.browser.execute_cdp_cmd('Network.enable', {})
-        self.browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-            'source': '''
-                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
-                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
-                delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
-            '''
-        })
+        pass
 
         
     async def parse_by_town(self, town='moskva'):
@@ -57,8 +32,13 @@ class AvitoParserClass(object):
         headers = {'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7','accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7','cache-control': 'max-age=1', 'priority': 'u=0, i','sec-ch-ua': '"Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"','sec-ch-ua-mobile': '?0','sec-ch-ua-platform': '"Windows"','sec-fetch-dest': 'document','sec-fetch-mode': 'navigate','sec-fetch-site': 'none','sec-fetch-user': '?1','upgrade-insecure-requests': '1','user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',}
         params = {'_': '','categoryId': '24','locationId': f'{town_id[town]}','cd': '0','s': '104','p': '1','params[201]': '1060','params[504][0]': '5256','verticalCategoryId': '1','rootCategoryId': '4','localPriority': '1','disabledFilters[ids][0]': 'byTitle','disabledFilters[slugs][0]': 'bt',}
 
-        response = requests.get('https://www.avito.ru/web/1/js/items', params=params, cookies=cookies, headers=headers)
-        content = response.json()
+        try:
+            response = requests.get('https://www.avito.ru/web/1/js/items', params=params, cookies=cookies, headers=headers)
+            content = response.json()
+        except:
+            logging.error(f'Error Parsing: town={town}')
+            return []
+            
         try:
             ads = content['catalog']['items'][::-1]
         except:
