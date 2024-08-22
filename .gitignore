@@ -6,3 +6,5 @@ lib
 lib64
 pyvenv.cfg
 nohup.out
+info.log
+files
