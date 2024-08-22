@@ -32,7 +32,9 @@ class db_connect(object):
             sub_start timestamp without time zone,
             sub_end timestamp without time zone,
             pay_money integer DEFAULT 0,
-            town_search text DEFAULT 'moskva'
+            town_search text DEFAULT 'moskva',
+            referral_vote boolean DEFAULT true,
+            cnt_referral_votes integer DEFAULT 0
         )           
         ''')
 
@@ -68,7 +70,7 @@ class db_connect(object):
     def add_user(self, tg_id, username):
         self.cursor.execute(f'''
             INSERT INTO users (tg_id, username, sub_start, sub_end)
-            SELECT {tg_id}, '{username}', datetime('now'), datetime('now')
+            SELECT {tg_id}, '{username}', datetime('now'), datetime('now','+1 day')
             WHERE NOT EXISTS (SELECT 1 FROM users WHERE tg_id={tg_id});
         ''')
         self.base_connection.commit()
@@ -83,7 +85,7 @@ class db_connect(object):
         self.cursor.execute(f'''
             UPDATE users
             SET sub_start = datetime('now'),
-                sub_end = datetime('now','+7 day'),
+                sub_end = datetime('now','+1 month'),
                 pay_money = pay_money + {amount}
             WHERE tg_id = {tg_id};
         ''')
