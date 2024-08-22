@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from dblogic.database import database
 
 from botlogic.settings import bot
+from botlogic.components import keyboard
 
 import logging
 
@@ -57,18 +58,19 @@ async def buy_sub_handler(message: Message, state: FSMContext) -> None:
         
     await message.answer_invoice(
             title="Подписка на бота",
-            description="Активация подписки на бота на 1 неделю",
+            description="Активация подписки на бота на 1 месяц",
             provider_token="381764678:TEST:91955",
             currency="rub",
             is_flexible=False,
             prices=[
                 types.LabeledPrice(
-                    label="Подписка на 1 неделю",
-                    amount=100*100
+                    label="Подписка на 1 месяц",
+                    amount=1300*100
                 )
             ],
-            start_parameter="one-weak-subscription",
-            payload="test-invoice-payload"
+            start_parameter="one-month-subscription",
+            payload="test-invoice-payload",
+            reply_markup=keyboard
     )
     
     
@@ -89,7 +91,10 @@ async def successful_payment_handler(message: Message, state: FSMContext) -> Non
     await identification_user(message=message, state=state)
     user_info = await state.get_data()
     
-    await message.answer(f"Платеж на сумму {message.successful_payment.total_amount // 100} {message.successful_payment.currency} прошел успешно.\nВаша подписка продлена до <code>{user_info['sub_end']}</code>")
+    await message.answer(
+        f"Платеж на сумму {message.successful_payment.total_amount // 100} {message.successful_payment.currency} прошел успешно.\nВаша подписка продлена до <code>{user_info['sub_end']}</code>",
+        reply_markup=keyboard
+    )
     
     
 
