@@ -59,7 +59,7 @@ async def buy_sub_handler(message: Message, state: FSMContext) -> None:
     await message.answer_invoice(
             title="Подписка на бота",
             description="Активация подписки на бота на 1 месяц",
-            provider_token="381764678:TEST:91955",
+            provider_token="390540012:LIVE:55144",
             currency="rub",
             is_flexible=False,
             prices=[
@@ -69,8 +69,7 @@ async def buy_sub_handler(message: Message, state: FSMContext) -> None:
                 )
             ],
             start_parameter="one-month-subscription",
-            payload="test-invoice-payload",
-            reply_markup=keyboard
+            payload="test-invoice-payload"
     )
     
     
