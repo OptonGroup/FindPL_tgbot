@@ -2,6 +2,8 @@ apt-get update
 apt install python3-pip
 apt install python3.12-venv
 
+git config user.name OptonGroup
+git config user.email opton.group@outlook.com
 git clone https://github.com/OptonGroup/FindPL_tgbot.git
 
 cd FindPL_tgbot
