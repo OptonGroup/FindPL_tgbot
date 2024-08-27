@@ -45,17 +45,16 @@ async def get_info_handler(message: Message, state: FSMContext) -> None:
 async def support_handler(message: Message, state: FSMContext) -> None:
     await message.answer(
         '''
-Оплата подписки через Telegram Stars ⭐️
+<b>Оплата через Telegram Stars ⭐️</b>
 
 Вы можете приобрести звезды через @PremiumBot
 
-О нашем сервисе:
-
+<b>О нашем сервисе:</b>
 С помощью нашего бота вы сможете оперативно дозваниваться до собственников, благодаря чему вы сможете быть первым в очереди на просмотр.
 
 Некоторые риэлторы тоже дозваниваются первыми через аналогичный сервис, далее выставляют квартиры уже с комиссией. Наш бот поможет вам быть быстрее.
 
-Поддержка: @s1cptn
+<b>Поддержка:</b> @s1cptn
         ''',
         reply_markup=keyboard
     )
