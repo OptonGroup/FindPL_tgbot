@@ -23,7 +23,7 @@ async def start_bot():
     dp.message.register(base_command.get_info_handler, F.text == '👤 Профиль')
     
     dp.message.register(base_command.support_handler, Command('get_support'))
-    dp.message.register(base_command.support_handler, F.text == '💬 Тех. Поддержка')
+    dp.message.register(base_command.support_handler, F.text == '💬 Помощь')
     
     dp.message.register(database_command.buy_sub_handler, Command('buy_sub'))
     dp.message.register(database_command.buy_sub_handler, F.text == '🛒 Купить Подписку')

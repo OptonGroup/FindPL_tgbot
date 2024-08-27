@@ -11,7 +11,7 @@ keyboard = ReplyKeyboardMarkup(
         ],
         [
             KeyboardButton(text="🌆 Сменить Город"),
-            KeyboardButton(text="💬 Тех. Поддержка"),
+            KeyboardButton(text="💬 Помощь"),
         ]
     ],
     resize_keyboard=True

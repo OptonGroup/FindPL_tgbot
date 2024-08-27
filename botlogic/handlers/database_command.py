@@ -8,7 +8,6 @@ from botlogic.settings import bot
 from botlogic.components import keyboard
 
 import logging
-
 from aiogram.types import (
     KeyboardButton,
     Message,
@@ -17,19 +16,6 @@ from aiogram.types import (
 )
 
 
-keyboard = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text="👤 Профиль"),
-            KeyboardButton(text="🛒 Купить Подписку"),
-        ],
-        [
-            KeyboardButton(text="🌆 Сменить Город"),
-            KeyboardButton(text="💬 Тех. Поддержка"),
-        ]
-    ],
-    resize_keyboard=True
-)
 
 town_translate = {'москва': 'moskva', 'moskva': 'москва', 'санкт-петербург': 'sankt-peterburg', 'sankt-peterburg': 'санкт-петербург', 'екатеринбург': 'ekaterinburg', 'ekaterinburg': 'екатеринбург', 'краснодар': 'krasnodar', 'krasnodar': 'краснодар'}
 
