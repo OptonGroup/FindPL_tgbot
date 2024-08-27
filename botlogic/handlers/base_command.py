@@ -19,7 +19,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 
     user_info = await state.get_data()
     await message.answer(
-        f'''<b>Что может делать этот бот?</b>\nБот FindPL уведомляет обо всех новых объявлениях на площадке Авито о снятии квартир в городах  Москва, Санкт-Петербург, Екатеринбург, Краснодар.\nВам доступна подписка до <code>{user_info['sub_end']}</code>''',
+        f'''<b>Что может делать этот бот?</b>\nБот Kv/M уведомляет обо всех новых объявлениях на площадке Авито о снятии квартир в городах  Москва, Санкт-Петербург, Екатеринбург, Краснодар.\nВам доступна подписка до <code>{user_info['sub_end']}</code>''',
         reply_markup=keyboard
     )
     
