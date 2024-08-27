@@ -45,13 +45,12 @@ async def buy_sub_handler(message: Message, state: FSMContext) -> None:
     await message.answer_invoice(
             title="Подписка на бота",
             description="Активация подписки на бота на 1 месяц",
-            provider_token="390540012:LIVE:55144",
-            currency="rub",
+            currency="XTR",
             is_flexible=False,
             prices=[
                 types.LabeledPrice(
                     label="Подписка на 1 месяц",
-                    amount=1300*100
+                    amount=750
                 )
             ],
             start_parameter="one-month-subscription",
@@ -70,14 +69,14 @@ async def successful_payment_handler(message: Message, state: FSMContext) -> Non
     user_info = await state.get_data()
     database.user_renew_subscription(
         tg_id=user_info['tg_id'],
-        amount=message.successful_payment.total_amount // 100
+        amount=message.successful_payment.total_amount
     )
     
     await identification_user(message=message, state=state)
     user_info = await state.get_data()
     
     await message.answer(
-        f"Платеж на сумму {message.successful_payment.total_amount // 100} {message.successful_payment.currency} прошел успешно.\nВаша подписка продлена до <code>{user_info['sub_end']}</code>",
+        f"Платеж на сумму {message.successful_payment.total_amount} {message.successful_payment.currency} прошел успешно.\nВаша подписка продлена до <code>{user_info['sub_end']}</code>",
         reply_markup=keyboard
     )
     
