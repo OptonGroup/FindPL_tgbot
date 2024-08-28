@@ -20,18 +20,18 @@ async def start_bot():
     dp.message.register(base_command.command_start_handler, Command(commands='start'))
     
     dp.message.register(base_command.get_info_handler, Command(commands='get_info'))
-    dp.message.register(base_command.get_info_handler, F.text == '👤 Профиль')
+    dp.message.register(base_command.get_info_handler, F.text == '🤖 Профиль')
     
     dp.message.register(base_command.support_handler, Command('get_support'))
     dp.message.register(base_command.support_handler, F.text == '💬 Помощь')
     
     dp.message.register(database_command.buy_sub_handler, Command('buy_sub'))
-    dp.message.register(database_command.buy_sub_handler, F.text == '🛒 Купить Подписку')
+    dp.message.register(database_command.buy_sub_handler, F.text == '⭐️ Купить Подписку')
     dp.message.register(database_command.successful_payment_handler, F.successful_payment)
     dp.pre_checkout_query.register(database_command.pre_checkout_query, lambda query: True)
     
     dp.message.register(database_command.get_town_keyboard_handler, Command('change_town'))
-    dp.message.register(database_command.get_town_keyboard_handler, F.text == '🌆 Сменить Город')
+    dp.message.register(database_command.get_town_keyboard_handler, F.text == '🏙 Сменить Город')
     dp.message.register(database_command.change_town_handler, F.text.lower().in_({'москва', 'санкт-петербург', 'екатеринбург', 'краснодар'}))    
     
     dp.message.register(admin_command.admin_commands_handler, Command('admin_commands'))

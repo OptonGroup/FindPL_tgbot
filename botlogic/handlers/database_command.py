@@ -41,7 +41,7 @@ async def identification_user(message: Message, state: FSMContext) -> None:
 
 async def buy_sub_handler(message: Message, state: FSMContext) -> None:
     await identification_user(message=message, state=state)
-        
+    await message.answer('Оплата через Telegram Stars ⭐️\n\nВы можете приобрести звезды через @PremiumBot')
     await message.answer_invoice(
             title="Подписка на бота",
             description="Активация подписки на бота на 1 месяц",
@@ -65,7 +65,7 @@ async def pre_checkout_query(pre_checkout_q: types.PreCheckoutQuery):
 async def successful_payment_handler(message: Message, state: FSMContext) -> None:
     logging.info(f'SUCCESSFUL PAYMENT: tg_id={message.from_user.id}')
 
-    await identification_user(message=message, state=state)
+    await identification_user(message=message, state=state)	
     user_info = await state.get_data()
     database.user_renew_subscription(
         tg_id=user_info['tg_id'],
