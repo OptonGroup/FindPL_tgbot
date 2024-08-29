@@ -1,7 +1,10 @@
 from aiogram.types import (
     KeyboardButton,
-    ReplyKeyboardMarkup
+    ReplyKeyboardMarkup,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
 )
+from aiogram.fsm.state import State, StatesGroup
 
 keyboard = ReplyKeyboardMarkup(
     keyboard=[
@@ -16,3 +19,13 @@ keyboard = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
+
+
+inline_start_list = [
+    [InlineKeyboardButton(text="Ввести username друга", callback_data='add_referral')],
+]
+start_button = InlineKeyboardMarkup(inline_keyboard=inline_start_list)
+
+
+class Form(StatesGroup):
+    referral_username = State()

@@ -8,3 +8,4 @@ pyvenv.cfg
 nohup.out
 info.log
 files/*
+test.py

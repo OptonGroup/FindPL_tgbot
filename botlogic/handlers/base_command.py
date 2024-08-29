@@ -8,7 +8,7 @@ from aiogram.types import (
 )
 
 from botlogic.handlers.database_command import identification_user
-from botlogic.components import keyboard
+from botlogic import components
 
 town_translate = {'москва': 'moskva', 'moskva': 'москва', 'санкт-петербург': 'sankt-peterburg', 'sankt-peterburg': 'санкт-петербург', 'екатеринбург': 'ekaterinburg', 'ekaterinburg': 'екатеринбург', 'краснодар': 'krasnodar', 'krasnodar': 'краснодар'}
 
@@ -19,8 +19,16 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 
     user_info = await state.get_data()
     await message.answer(
-        f'''<b>Что может делать этот бот?</b>\nБот Kv/M уведомляет обо всех новых объявлениях на площадке Авито о снятии квартир в городах  Москва, Санкт-Петербург, Екатеринбург, Краснодар.\nВам доступна подписка до <code>{user_info['sub_end']}</code>''',
-        reply_markup=keyboard
+        f'''<b>Получайте уведомления о появлении новых квартир -</b> дозванивайтесь первым, будьте первым в очереди на просмотр, арендуйте без комиссии\n\nМы доступны в 4 городах: Москва, Санкт-Петербург, Екатеринбург и Краснодар.\n\nВам доступна подписка до <code>{user_info['sub_end']}</code>''',
+        reply_markup=components.keyboard
+    )
+    await message.answer(
+        f'''<b>-53% на первый месяц 🔥</b>
+
+Если у вашего друга активна подписка, вы можете ввести его username (если нет username, попросите друга его id из профиля бота)
+
+Мы рады всем новым пользователям. Стоимость подписки по реферальной программе - 350 Telegram Stars ⭐️''',
+        reply_markup=components.start_button
     )
     
 
@@ -39,7 +47,7 @@ async def get_info_handler(message: Message, state: FSMContext) -> None:
 
 - - - - - - - - - - - - - - - - - - - - - - - -
     '''
-    await message.answer(user_info_text, reply_markup=keyboard)
+    await message.answer(user_info_text, reply_markup=components.keyboard)
     
 
 async def support_handler(message: Message, state: FSMContext) -> None:
@@ -56,5 +64,5 @@ async def support_handler(message: Message, state: FSMContext) -> None:
 
 <b>Поддержка:</b> @s1cptn
         ''',
-        reply_markup=keyboard
+        reply_markup=components.keyboard
     )

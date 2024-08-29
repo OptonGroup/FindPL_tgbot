@@ -33,8 +33,8 @@ class db_connect(object):
             sub_end timestamp without time zone,
             pay_money integer DEFAULT 0,
             town_search text DEFAULT 'moskva',
-            referral_vote boolean DEFAULT true,
-            cnt_referral_votes integer DEFAULT 0
+            is_referral_activated boolean DEFAULT false,
+            is_referral_voted boolean DEFAULT false
         )           
         ''')
 
@@ -107,6 +107,26 @@ class db_connect(object):
         self.cursor.execute(f'''
             UPDATE users
             SET is_admin = {is_admin}
+            WHERE tg_id = {tg_id};
+        ''')
+        self.base_connection.commit()
+        return self.get_user_by_tg_id(tg_id=tg_id)    
+    
+
+    def user_set_ref(self, tg_id):
+        self.cursor.execute(f'''
+            UPDATE users
+            SET is_referral_activated = 1, is_referral_voted = 1
+            WHERE tg_id = {tg_id};
+        ''')
+        self.base_connection.commit()
+        return self.get_user_by_tg_id(tg_id=tg_id)
+    
+    
+    def user_del_ref(self, tg_id):
+        self.cursor.execute(f'''
+            UPDATE users
+            SET is_referral_activated = 0
             WHERE tg_id = {tg_id};
         ''')
         self.base_connection.commit()

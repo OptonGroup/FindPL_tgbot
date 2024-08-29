@@ -4,13 +4,14 @@ import logging
 
 from aiogram import F
 from aiogram import Dispatcher
-from aiogram.filters import Command
+from aiogram.filters import Command, StateFilter
 from aiogram.types.message import ContentType
 
 
 
 from botlogic.settings import bot
 from botlogic.handlers import base_command, database_command, admin_command
+from botlogic import components
 
 
 
@@ -43,6 +44,9 @@ async def start_bot():
     dp.message.register(admin_command.get_users_handler, Command('get_users_info'))
     dp.message.register(admin_command.get_logs_handler, Command('get_logs'))
     dp.message.register(admin_command.give_sub_handler, Command('give_sub'))
+    
+    dp.callback_query.register(database_command.process_callback_button_ref, lambda query: query)
+    dp.message.register(database_command.capture_referral_username, StateFilter(components.Form.referral_username))
         
     await dp.start_polling(bot)
 

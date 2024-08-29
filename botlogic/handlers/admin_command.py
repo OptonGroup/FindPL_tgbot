@@ -12,7 +12,7 @@ import logging
 from tabulate import tabulate
 
 from botlogic.handlers.base_command import identification_user
-from botlogic.components import keyboard
+from botlogic import components
 
 
 
@@ -23,7 +23,7 @@ async def secret_code_handler(message: Message, state: FSMContext) -> None:
         
     await message.answer(
         'Теперь Вы - Админ. Доступные вам комманды на /admin_commands',
-        reply_markup=keyboard
+        reply_markup=components.keyboard
     )
     
 
@@ -36,7 +36,7 @@ async def admin_commands_handler(message: Message, state: FSMContext) -> None:
         
     await message.answer(
         'Вы - Админ. Доступные комманды:\n/get_admin_25634 - Получить права админа\n/admin_commands - Получить команды, доступные админам\n/get_user_by_id [user_id] - Получить информацию о пользователе по его [🔑ID]\n/get_user_by_name [username] - Получить информацию о пользователе по его [Имя Пользователя]\n/give_admin [user_id] - Выдать прова админа пользователю по его [🔑ID]\n/remove_admin [user_id] - Забрать права админа пользователя по его [🔑ID]\n/get_users_info - Получить информацию о всех пользователях\n/get_logs - Получить лог файл бота\n/give_sub [user_id] - Выдать подписку пользователю на неделю по его [🔑ID]',
-        reply_markup=keyboard
+        reply_markup=components.keyboard
     )
     
 
@@ -64,7 +64,7 @@ async def get_user_by_id_handler(message: Message, state: FSMContext, command: C
     if not user_id:
         await message.answer(
             'Необходимо ввести [🔑ID] пользователя. Напимер /get_user_by_id 123456789',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         return
     
@@ -77,12 +77,12 @@ async def get_user_by_id_handler(message: Message, state: FSMContext, command: C
             text += f'<b>{row_name}</b> - {user_info[row_name]}\n'
         await message.answer(
             text,
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         ) 
     except:
         await message.answer(
             f'Пользователь с id={user_id} не найден',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         
 
@@ -97,7 +97,7 @@ async def get_user_by_username_handler(message: Message, state: FSMContext, comm
     if not username:
         await message.answer(
             'Необходимо ввести [Имя пользователя]. Напимер /get_user_by_name durov',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         return
     
@@ -110,13 +110,13 @@ async def get_user_by_username_handler(message: Message, state: FSMContext, comm
             text += f'<b>{row_name}</b> - {user_info[row_name]}\n'
         await message.answer(
             text,
-            reply_markup=keyboard
+            reply_markup=components.keyboard
             
         ) 
     except:
         await message.answer(
             f'Пользователь с username={username} не найден',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
 
 
@@ -131,7 +131,7 @@ async def give_admin_handler(message: Message, state: FSMContext, command: Comma
     if not user_id:
         await message.answer(
             'Необходимо ввести [🔑ID] пользователя. Напимер /get_user_by_id 123456789',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         return
     
@@ -139,12 +139,12 @@ async def give_admin_handler(message: Message, state: FSMContext, command: Comma
         database.user_set_admin(tg_id=user_id, is_admin=1)
         await message.answer(
             f'Админ-права были выданы пользователю id={user_id}',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
     except:
         await message.answer(
             f'Не получилось выдать Админ-права пользователю id={user_id}',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         
 
@@ -159,7 +159,7 @@ async def remove_admin_handler(message: Message, state: FSMContext, command: Com
     if not user_id:
         await message.answer(
             'Необходимо ввести [🔑ID] пользователя. Напимер /get_user_by_id 123456789',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         return
     
@@ -167,12 +167,12 @@ async def remove_admin_handler(message: Message, state: FSMContext, command: Com
         database.user_set_admin(tg_id=user_id, is_admin=0)
         await message.answer(
             f'Забрали Админ-права у пользователя id={user_id}',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
     except:
         await message.answer(
             f'Не получилось забрать Админ-права у пользователя id={user_id}',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         
 
@@ -186,12 +186,12 @@ async def get_users_handler(message: Message, state: FSMContext) -> None:
     data = []
     for row in database.get_users():
         data.append([element for element in row])
-    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search']
+    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search', 'ref_activated', 'ref_voted']
          
     with open('files/users_info.txt', 'w', encoding='utf-8') as file:
         file.write(tabulate(data, headers=head, tablefmt="grid"))
     document = FSInputFile('files/users_info.txt')
-    await message.answer_document(document, reply_markup=keyboard)
+    await message.answer_document(document, reply_markup=components.keyboard)
     document = ''
     
 
@@ -203,7 +203,7 @@ async def get_logs_handler(message: Message, state: FSMContext) -> None:
         return
     
     document = FSInputFile('info.log')
-    await message.answer_document(document, reply_markup=keyboard)
+    await message.answer_document(document, reply_markup=components.keyboard)
     document = ''
     
     
@@ -218,7 +218,7 @@ async def give_sub_handler(message: Message, state: FSMContext, command: Command
     if not user_id:
         await message.answer(
             'Необходимо ввести [🔑ID] пользователя. Напимер /get_user_by_id 123456789',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
         return
     
@@ -226,10 +226,10 @@ async def give_sub_handler(message: Message, state: FSMContext, command: Command
         database.user_renew_subscription(tg_id=user_id, amount=0)
         await message.answer(
             f'Продлили подписку у пользователя id={user_id} на месяц',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
     except:
         await message.answer(
             f'Не получилось продлить подписку у пользователя id={user_id}',
-            reply_markup=keyboard
+            reply_markup=components.keyboard
         )
