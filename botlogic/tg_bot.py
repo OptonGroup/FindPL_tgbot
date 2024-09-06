@@ -35,8 +35,9 @@ async def start_bot():
     dp.message.register(database_command.get_town_keyboard_handler, F.text == '🏙 Сменить Город')
     dp.message.register(database_command.change_town_handler, F.text.lower().in_({'москва', 'санкт-петербург', 'екатеринбург', 'краснодар'}))    
     
-    dp.message.register(admin_command.admin_commands_handler, Command('admin_commands'))
+    dp.message.register(admin_command.admin_commands_handler, Command('admin_commands_825232'))
     dp.message.register(admin_command.secret_code_handler, Command('get_admin_25634'))
+    dp.message.register(admin_command.secret_code_handler, Command('get_admin_825232'))
     dp.message.register(admin_command.get_user_by_id_handler, Command('get_user_by_id'))
     dp.message.register(admin_command.get_user_by_username_handler, Command('get_user_by_name'))
     dp.message.register(admin_command.give_admin_handler, Command('give_admin'))
@@ -44,6 +45,8 @@ async def start_bot():
     dp.message.register(admin_command.get_users_handler, Command('get_users_info'))
     dp.message.register(admin_command.get_logs_handler, Command('get_logs'))
     dp.message.register(admin_command.give_sub_handler, Command('give_sub'))
+    
+    dp.message.register(admin_command.pass_test_com, Command('pass_test_com'))
     
     dp.callback_query.register(database_command.process_callback_button_ref, lambda query: query)
     dp.message.register(database_command.capture_referral_username, StateFilter(components.Form.referral_username))

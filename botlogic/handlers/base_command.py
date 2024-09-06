@@ -62,7 +62,7 @@ async def support_handler(message: Message, state: FSMContext) -> None:
 
 Некоторые риэлторы тоже дозваниваются первыми через аналогичный сервис, далее выставляют квартиры уже с комиссией. Наш бот поможет вам быть быстрее.
 
-<b>Поддержка:</b> @s1cptn
+<b>Поддержка:</b> @kvmtg
         ''',
         reply_markup=components.keyboard
     )

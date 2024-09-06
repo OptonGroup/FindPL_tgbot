@@ -186,7 +186,7 @@ async def get_users_handler(message: Message, state: FSMContext) -> None:
     data = []
     for row in database.get_users():
         data.append([element for element in row])
-    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search', 'ref_activated', 'ref_voted']
+    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search', 'ref_activated', 'ref_voted', 'ref_data']
          
     with open('files/users_info.txt', 'w', encoding='utf-8') as file:
         file.write(tabulate(data, headers=head, tablefmt="grid"))
@@ -233,3 +233,8 @@ async def give_sub_handler(message: Message, state: FSMContext, command: Command
             f'Не получилось продлить подписку у пользователя id={user_id}',
             reply_markup=components.keyboard
         )
+
+async def pass_test_com(message: Message, state: FSMContext) -> None:
+    from botlogic.functions import functions
+    
+    await functions.send_text(text='Уважаемый пользователь! Сейчас бот находится под большой нагрузкой, поэтому некоторые объявления могут приходить с задержкой. Наша команда активно работает над исправлением данной ситуацией')

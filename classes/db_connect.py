@@ -34,7 +34,8 @@ class db_connect(object):
             pay_money integer DEFAULT 0,
             town_search text DEFAULT 'moskva',
             is_referral_activated boolean DEFAULT false,
-            is_referral_voted boolean DEFAULT false
+            is_referral_voted boolean DEFAULT false,
+            ref_data text
         )           
         ''')
 
@@ -113,10 +114,10 @@ class db_connect(object):
         return self.get_user_by_tg_id(tg_id=tg_id)    
     
 
-    def user_set_ref(self, tg_id):
+    def user_set_ref(self, tg_id, ref):
         self.cursor.execute(f'''
             UPDATE users
-            SET is_referral_activated = 1, is_referral_voted = 1
+            SET is_referral_activated = 1, is_referral_voted = 1, ref_data = '{ref}'
             WHERE tg_id = {tg_id};
         ''')
         self.base_connection.commit()

@@ -34,7 +34,8 @@ async def identification_user(message: Message, state: FSMContext) -> None:
             pay_money = user_info[6],
             town_search = user_info[7],
             ref_activated = user_info[8],
-            ref_voted = user_info[9]
+            ref_voted = user_info[9],
+            ref_data = user_info[10]
         )
         
         
@@ -142,7 +143,7 @@ async def capture_referral_username(message: Message, state: FSMContext):
             await message.answer(
                 f'''Пользователь найден.\nСтоимость подписки изменена.'''
             )
-            database.user_set_ref(tg_id=user_info['tg_id'])
+            database.user_set_ref(tg_id=user_info['tg_id'], ref=referral)
             
         else:
             await message.answer(
@@ -153,11 +154,11 @@ async def capture_referral_username(message: Message, state: FSMContext):
             await message.answer(
                 f'''Пользователь найден.\nСтоимость подписки изменена.'''
             )
-            database.user_set_ref(tg_id=user_info['tg_id'])
+            database.user_set_ref(tg_id=user_info['tg_id'], ref=referral)
             
         else:
             await message.answer(
-                f'''Пользователь с username={referral_username} не найден или у пользователя не активна подписка\nВвести данные друга вы сможете ещё раз по команде /start'''
+                f'''Пользователь с username={referral} не найден или у пользователя не активна подписка\nВвести данные друга вы сможете ещё раз по команде /start'''
             )
 
     await state.clear()
