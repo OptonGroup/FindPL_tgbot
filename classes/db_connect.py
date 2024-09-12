@@ -1,5 +1,4 @@
 import sqlite3
-import datetime 
 
 
 class db_connect(object):
@@ -35,7 +34,9 @@ class db_connect(object):
             town_search text DEFAULT 'moskva',
             is_referral_activated boolean DEFAULT false,
             is_referral_voted boolean DEFAULT false,
-            ref_data text
+            ref_data text,
+            filter_start_price integer DEFAULT 0,
+            filter_end_price integer DEFAULT 100000000
         )           
         ''')
 
@@ -44,7 +45,7 @@ class db_connect(object):
     
 
     # users
-    def get_users(self, tg_id=None, username=None, town=None, sub_active=False):
+    def get_users(self, tg_id=None, username=None, town=None, sub_active=0):
         request = f'''SELECT * FROM users WHERE id '''
         if tg_id:
             request += f'''AND tg_id = {tg_id} '''
@@ -52,8 +53,10 @@ class db_connect(object):
             request += f'''AND username = '{username}' '''
         if town:
             request += f'''AND town_search = '{town}' '''
-        if sub_active:
+        if sub_active == 1:
             request += f'''AND sub_end >= datetime('now') '''
+        if sub_active == -1:
+            request += f'''AND sub_end < datetime('now') '''
         self.cursor.execute(request)
         return self.cursor.fetchall()
 
@@ -90,6 +93,24 @@ class db_connect(object):
                 pay_money = pay_money + {amount}
             WHERE tg_id = {tg_id};
         ''')
+        self.base_connection.commit()
+        return self.get_user_by_tg_id(tg_id=tg_id)
+    
+    
+    def user_change_filter_price(self, tg_id, from_price=None, to_price=None):
+        if from_price:
+            self.cursor.execute(f'''
+                UPDATE users
+                SET filter_start_price = {from_price}
+                WHERE tg_id = {tg_id};
+            ''')
+            
+        if to_price:
+            self.cursor.execute(f'''
+                UPDATE users
+                SET filter_end_price = {to_price}
+                WHERE tg_id = {tg_id};
+            ''')
         self.base_connection.commit()
         return self.get_user_by_tg_id(tg_id=tg_id)
     

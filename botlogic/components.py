@@ -15,6 +15,9 @@ keyboard = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="🏙 Сменить Город"),
             KeyboardButton(text="💬 Помощь"),
+        ],
+        [
+            KeyboardButton(text="⚙️ Фильтр Цены"),
         ]
     ],
     resize_keyboard=True
@@ -29,3 +32,5 @@ start_button = InlineKeyboardMarkup(inline_keyboard=inline_start_list)
 
 class Form(StatesGroup):
     referral_username = State()
+    filter_start_price = State()
+    filter_end_price = State()

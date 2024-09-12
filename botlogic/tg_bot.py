@@ -33,7 +33,14 @@ async def start_bot():
     
     dp.message.register(database_command.get_town_keyboard_handler, Command('change_town'))
     dp.message.register(database_command.get_town_keyboard_handler, F.text == '🏙 Сменить Город')
-    dp.message.register(database_command.change_town_handler, F.text.lower().in_({'москва', 'санкт-петербург', 'екатеринбург', 'краснодар'}))    
+    dp.message.register(database_command.change_town_handler, F.text.lower().in_({'москва', 'санкт-петербург', 'новосибирск', 'екатеринбург', 'казань', 'нижний новгород', 'красноярск', 'челябинск', 'самара', 'уфа', 'ростов-на-дону', 'краснодар'}))    
+    
+    dp.message.register(database_command.price_filter_handler, Command('price_filter'))
+    dp.message.register(database_command.price_filter_handler, F.text == '⚙️ Фильтр Цены')
+    dp.message.register(database_command.price_filter_min, StateFilter(components.Form.filter_start_price))
+    dp.message.register(database_command.price_filter_max, StateFilter(components.Form.filter_end_price))
+    
+
     
     dp.message.register(admin_command.admin_commands_handler, Command('admin_commands_825232'))
     dp.message.register(admin_command.secret_code_handler, Command('get_admin_25634'))

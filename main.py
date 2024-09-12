@@ -11,7 +11,7 @@ from botlogic.functions import functions
 async def run_parser():
     num_of_iter = 0
     while True:
-        for town in ['moskva', 'sankt-peterburg', 'krasnodar', 'ekaterinburg']:
+        for town in ['moskva', 'sankt-peterburg', 'novosibirsk', 'ekaterinburg', 'kazan', 'nizhniy_novgorod', 'krasnoyarsk', 'chelyabinsk', 'samara', 'ufa', 'rostov-na-donu', 'krasnodar']:
             new_ads = await AvitoParser.parse_by_town(town=town)
             logging.info(f'Get {len(new_ads)} new ads from {town}')
             if num_of_iter:

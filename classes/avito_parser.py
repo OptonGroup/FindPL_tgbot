@@ -25,6 +25,14 @@ class AvitoParserClass(object):
             'sankt-peterburg': '653240',
             'krasnodar': '633540',
             'ekaterinburg': '654070',
+            'novosibirsk': '641780',
+            'kazan': '650400',
+            'nizhniy_novgorod': '640860',
+            'krasnoyarsk': '635320',
+            'chelyabinsk': '661420',
+            'samara': '653040',
+            'ufa': '646600',
+            'rostov-na-donu': '652000',
         }
 
         await asyncio.sleep(3)
@@ -54,9 +62,10 @@ class AvitoParserClass(object):
             
             if not database.is_ad_in_database(ad_id=ad_id):
                 database.add_ad(ad_id=ad_id, town=town)
-                new_ads.append(
-                    f'''{ad['title']}\n📆 {datetime.utcfromtimestamp(ad['sortTimeStamp']//1000).strftime('%Y-%m-%d %H:%M:%S')}\n💵 {ad['priceDetailed']['fullString']}\n\nhttps://www.avito.ru/{ad['id']}\n🏠 {ad['coords']['address_user']}'''
-                )
+                new_ads.append([
+                    f'''{ad['title']}\n📆 {datetime.utcfromtimestamp(ad['sortTimeStamp']//1000).strftime('%Y-%m-%d %H:%M:%S')}\n💵 {ad['priceDetailed']['fullString']}\n\nhttps://www.avito.ru/{ad['id']}\n🏠 {ad['coords']['address_user']}''',
+                    ad['priceDetailed']['value']
+                ])
            
         return new_ads
     

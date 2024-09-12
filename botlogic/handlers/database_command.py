@@ -14,10 +14,10 @@ from aiogram.types import (
     ReplyKeyboardRemove,
 )
 
+import datetime 
 
 
-town_translate = {'москва': 'moskva', 'moskva': 'москва', 'санкт-петербург': 'sankt-peterburg', 'sankt-peterburg': 'санкт-петербург', 'екатеринбург': 'ekaterinburg', 'ekaterinburg': 'екатеринбург', 'краснодар': 'krasnodar', 'krasnodar': 'краснодар'}
-
+town_translate = {'москва': 'moskva', 'санкт-петербург': 'sankt-peterburg', 'новосибирск': 'novosibirsk', 'екатеринбург': 'ekaterinburg', 'казань': 'kazan', 'нижний новгород': 'nizhniy_novgorod', 'красноярск': 'krasnoyarsk', 'челябинск': 'chelyabinsk', 'самара': 'samara', 'уфа': 'ufa', 'ростов-на-дону': 'rostov-na-donu', 'краснодар': 'krasnodar', 'moskva': 'москва', 'sankt-peterburg': 'санкт-петербуг', 'novosibirsk': 'новосибирск', 'ekaterinburg': 'екатеринбург', 'kazan': 'казань', 'nizhniy_novgorod': 'нижний новгород', 'krasnoyarsk': 'красноярск', 'chelyabinsk': 'челябинск', 'samara': 'самара', 'ufa': 'уфа', 'rostov-na-donu': 'ростов-на-дону', 'krasnodar': 'краснодар'}
 
 
 async def identification_user(message: Message, state: FSMContext) -> None:
@@ -35,15 +35,28 @@ async def identification_user(message: Message, state: FSMContext) -> None:
             town_search = user_info[7],
             ref_activated = user_info[8],
             ref_voted = user_info[9],
-            ref_data = user_info[10]
+            ref_data = user_info[10],
+            filter_start_price = user_info[11],
+            filter_end_price = user_info[12]
         )
         
-        
+async def check_sub_on_chanel(message) -> bool:
+    user_status = await bot.get_chat_member(chat_id=-1002080804090, user_id=message.from_user.id)
+    if user_status.status == 'left':
+        await message.answer(
+            'Доступ к боту доступен только пользователям, подписанным на наш тг канал @kvm_tg'
+        )
+        return False
+    return True
+            
         
 
 async def buy_sub_handler(message: Message, state: FSMContext) -> None:
+    # is_user_in_chanel = await check_sub_on_chanel(message=message)
+    # if not is_user_in_chanel:
+    #     return
     await identification_user(message=message, state=state)
-    await message.answer('Оплата через Telegram Stars ⭐️\n\nВы можете приобрести звезды через @PremiumBot')
+    await message.answer('https://t.me/kvm_tg/14\nОплата через Telegram Stars ⭐️\n\nВы можете приобрести звезды через @PremiumBot')
     
     sub_price = 750
     user_info = await state.get_data()
@@ -90,7 +103,6 @@ async def successful_payment_handler(message: Message, state: FSMContext) -> Non
         reply_markup=components.keyboard
     )
     
-    
 
 async def get_town_keyboard_handler(message: Message, state: FSMContext) -> None:
     await message.answer(
@@ -100,9 +112,21 @@ async def get_town_keyboard_handler(message: Message, state: FSMContext) -> None
                 [
                     KeyboardButton(text="Москва"),
                     KeyboardButton(text="Санкт-Петербург"),
+                    KeyboardButton(text="Новосибирск"),
                 ],
                 [
                     KeyboardButton(text="Екатеринбург"),
+                    KeyboardButton(text="Казань"),
+                    KeyboardButton(text="Нижний Новгород"),
+                ],
+                [
+                    KeyboardButton(text="Красноярск"),
+                    KeyboardButton(text="Челябинск"),
+                    KeyboardButton(text="Самара"),
+                ],
+                [
+                    KeyboardButton(text="Уфа"),
+                    KeyboardButton(text="Ростов-на-Дону"),
                     KeyboardButton(text="Краснодар"),
                 ]
             ],
@@ -118,6 +142,44 @@ async def change_town_handler(message: Message, state: FSMContext) -> None:
         f'Город поиска квартир изменён на {message.text}',
         reply_markup=components.keyboard
     )
+    
+
+async def price_filter_handler(message: Message, state: FSMContext) -> None:
+    await identification_user(message=message, state=state)
+    user_info = await state.get_data()
+    end_sub = datetime.datetime.strptime(user_info['sub_end'], '%Y-%m-%d %H:%M:%S')
+    
+    if datetime.datetime.now().now() < end_sub:
+        await message.answer('Введите цену от которой ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await state.set_state(components.Form.filter_start_price)
+    else:
+        await message.answer('Фильтр цены - платная функция бота, чтобы ею воспользоваться нужно купить подпску')
+
+
+async def price_filter_min(message: Message, state: FSMContext):
+    min_price = message.text
+    
+    if min_price.isdigit():
+        database.user_change_filter_price(tg_id=message.from_user.id, from_price=min_price)
+        await message.answer('Введите максимальную цену за которую ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await state.set_state(components.Form.filter_end_price)
+    else:
+        await message.answer('Введите цену от которой ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await state.set_state(components.Form.filter_start_price)
+        
+
+async def price_filter_max(message: Message, state: FSMContext):
+    max_price = message.text
+    
+    if max_price.isdigit():
+        database.user_change_filter_price(tg_id=message.from_user.id, to_price=max_price)
+        await identification_user(message=message, state=state)
+        user_info = await state.get_data()
+        await message.answer(f'Фильтр поиска по квартирам установлен.\nВы получаете уведомления с квартирами <code>от {user_info["filter_start_price"]} до {user_info["filter_end_price"]} рублей</code>')
+        await state.clear()
+    else:
+        await message.answer('Введите максимальную цену за которую ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await state.set_state(components.Form.filter_end_price)
 
 
 async def process_callback_button_ref(callback_query: CallbackQuery, state: FSMContext):
@@ -139,7 +201,7 @@ async def capture_referral_username(message: Message, state: FSMContext):
     await identification_user(message=message, state=state)
     user_info = await state.get_data()
     if referral.isdigit():
-        if len(database.get_users(tg_id=referral, sub_active=True)):
+        if len(database.get_users(tg_id=referral, sub_active=1)):
             await message.answer(
                 f'''Пользователь найден.\nСтоимость подписки изменена.'''
             )
@@ -150,7 +212,7 @@ async def capture_referral_username(message: Message, state: FSMContext):
                 f'''Пользователь с ID={referral} не найден или у пользователя не активна подписка\nВвести данные друга вы сможете ещё раз по команде /start'''
             )
     else:
-        if len(database.get_users(username=referral, sub_active=True)):
+        if len(database.get_users(username=referral, sub_active=1)):
             await message.answer(
                 f'''Пользователь найден.\nСтоимость подписки изменена.'''
             )

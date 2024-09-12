@@ -10,7 +10,7 @@ from aiogram.types import (
 from botlogic.handlers.database_command import identification_user
 from botlogic import components
 
-town_translate = {'москва': 'moskva', 'moskva': 'москва', 'санкт-петербург': 'sankt-peterburg', 'sankt-peterburg': 'санкт-петербург', 'екатеринбург': 'ekaterinburg', 'ekaterinburg': 'екатеринбург', 'краснодар': 'krasnodar', 'krasnodar': 'краснодар'}
+town_translate = {'москва': 'moskva', 'санкт-петербург': 'sankt-peterburg', 'новосибирск': 'novosibirsk', 'екатеринбург': 'ekaterinburg', 'казань': 'kazan', 'нижний новгород': 'nizhniy_novgorod', 'красноярск': 'krasnoyarsk', 'челябинск': 'chelyabinsk', 'самара': 'samara', 'уфа': 'ufa', 'ростов-на-дону': 'rostov-na-donu', 'краснодар': 'krasnodar', 'moskva': 'москва', 'sankt-peterburg': 'санкт-петербуг', 'novosibirsk': 'новосибирск', 'ekaterinburg': 'екатеринбург', 'kazan': 'казань', 'nizhniy_novgorod': 'нижний новгород', 'krasnoyarsk': 'красноярск', 'chelyabinsk': 'челябинск', 'samara': 'самара', 'ufa': 'уфа', 'rostov-na-donu': 'ростов-на-дону', 'krasnodar': 'краснодар'}
 
 
 
@@ -19,7 +19,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 
     user_info = await state.get_data()
     await message.answer(
-        f'''<b>Получайте уведомления о появлении новых квартир -</b> дозванивайтесь первым, будьте первым в очереди на просмотр, арендуйте без комиссии\n\nМы доступны в 4 городах: Москва, Санкт-Петербург, Екатеринбург и Краснодар.\n\nВам доступна подписка до <code>{user_info['sub_end']}</code>''',
+        f'''<b>Получайте уведомления о появлении новых квартир -</b> дозванивайтесь первым, будьте первым в очереди на просмотр, арендуйте без комиссии\n<b>Для использования бота</b> - подпишитесь на наш канал @kvm_tg\n\nВам доступна подписка до <code>{user_info['sub_end']}</code>''',
         reply_markup=components.keyboard
     )
     await message.answer(
@@ -44,6 +44,7 @@ async def get_info_handler(message: Message, state: FSMContext) -> None:
 🌆Город поиска: <code>{town_translate[user_info['town_search']].capitalize()}</code>
 🔑 ID: <code>{user_info['tg_id']}</code>
 ▫️ Username: <code>{user_info['username']}</code>
+⚙️ Фильтр по цене: <code>от {user_info["filter_start_price"]} рублей до {user_info["filter_end_price"]} рублей</code>
 
 - - - - - - - - - - - - - - - - - - - - - - - -
     '''

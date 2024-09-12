@@ -186,7 +186,7 @@ async def get_users_handler(message: Message, state: FSMContext) -> None:
     data = []
     for row in database.get_users():
         data.append([element for element in row])
-    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search', 'ref_activated', 'ref_voted', 'ref_data']
+    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search', 'ref_activated', 'ref_voted', 'ref_data', 'filter_start_price', 'filter_end_price']
          
     with open('files/users_info.txt', 'w', encoding='utf-8') as file:
         file.write(tabulate(data, headers=head, tablefmt="grid"))
