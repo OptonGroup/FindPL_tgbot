@@ -27,16 +27,17 @@ async def start_bot():
     dp.message.register(base_command.support_handler, F.text == '💬 Помощь')
     
     dp.message.register(database_command.buy_sub_handler, Command('buy_sub'))
-    dp.message.register(database_command.buy_sub_handler, F.text == '⭐️ Купить Подписку')
+    dp.message.register(database_command.buy_sub_handler, F.text == '⭐️ Подписка')
     dp.message.register(database_command.successful_payment_handler, F.successful_payment)
     dp.pre_checkout_query.register(database_command.pre_checkout_query, lambda query: True)
     
     dp.message.register(database_command.get_town_keyboard_handler, Command('change_town'))
-    dp.message.register(database_command.get_town_keyboard_handler, F.text == '🏙 Сменить Город')
+    dp.message.register(database_command.get_town_keyboard_handler, F.text == '🏙 Город')
     dp.message.register(database_command.change_town_handler, F.text.lower().in_({'москва', 'санкт-петербург', 'новосибирск', 'екатеринбург', 'казань', 'нижний новгород', 'красноярск', 'челябинск', 'самара', 'уфа', 'ростов-на-дону', 'краснодар'}))    
     
     dp.message.register(database_command.price_filter_handler, Command('price_filter'))
-    dp.message.register(database_command.price_filter_handler, F.text == '⚙️ Фильтр Цены')
+    dp.message.register(database_command.price_filter_handler, F.text == '⚙️ Фильтр')
+    dp.callback_query.register(database_command.reset_filter, lambda query: query.data == 'reset_filter')
     dp.message.register(database_command.price_filter_min, StateFilter(components.Form.filter_start_price))
     dp.message.register(database_command.price_filter_max, StateFilter(components.Form.filter_end_price))
     
@@ -55,9 +56,10 @@ async def start_bot():
     
     dp.message.register(admin_command.pass_test_com, Command('pass_test_com'))
     
-    dp.callback_query.register(database_command.process_callback_button_ref, lambda query: query)
+    dp.callback_query.register(database_command.process_callback_button_ref, lambda query: query.data == 'add_referral')
     dp.message.register(database_command.capture_referral_username, StateFilter(components.Form.referral_username))
         
+    dp.callback_query.register(database_command.start_work_handler, lambda query: query.data == 'start_work')
     await dp.start_polling(bot)
 
 

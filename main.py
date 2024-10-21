@@ -19,10 +19,11 @@ async def run_parser():
                     await functions.send_ads(ads=new_ads, town=town)
                 except:
                     pass
-            if num_of_iter % 100 == 0:
-                database.delete_ads_with_time_more_12hours()
+        if num_of_iter % 100 == 0:
+            database.delete_ads_with_time_more_12hours()
+            await functions.send_alarm_active()
         num_of_iter += 1
-        await asyncio.sleep(120)
+        await asyncio.sleep(180)
 
 def main():
     loop = asyncio.get_event_loop()

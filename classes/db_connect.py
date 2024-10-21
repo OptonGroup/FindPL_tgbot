@@ -36,7 +36,8 @@ class db_connect(object):
             is_referral_voted boolean DEFAULT false,
             ref_data text,
             filter_start_price integer DEFAULT 0,
-            filter_end_price integer DEFAULT 100000000
+            filter_end_price integer DEFAULT 100000000,
+            last_active timestamp without time zone
         )           
         ''')
 
@@ -45,7 +46,7 @@ class db_connect(object):
     
 
     # users
-    def get_users(self, tg_id=None, username=None, town=None, sub_active=0):
+    def get_users(self, tg_id=None, username=None, town=None, sub_active=0, last_active=None):
         request = f'''SELECT * FROM users WHERE id '''
         if tg_id:
             request += f'''AND tg_id = {tg_id} '''
@@ -57,8 +58,21 @@ class db_connect(object):
             request += f'''AND sub_end >= datetime('now') '''
         if sub_active == -1:
             request += f'''AND sub_end < datetime('now') '''
+        if last_active:
+            request += f'''AND datetime('now', '-2 day') < last_active '''
         self.cursor.execute(request)
         return self.cursor.fetchall()
+    
+    
+    def get_users_no_active(self):
+        request = f'''SELECT * FROM users WHERE datetime('now', '-3 day') < last_active AND last_active < datetime('now', '-2 day') '''
+        self.cursor.execute(request)
+        users = self.cursor.fetchall()
+        for user in users:
+            request = f'''UPDATE users SET last_active = datetime('now', '-100 day') WHERE tg_id = {user[1]}'''
+            self.cursor.execute(request)
+        self.base_connection.commit()
+        return users
 
     
     def get_user_by_tg_id(self, tg_id):
@@ -76,6 +90,12 @@ class db_connect(object):
             INSERT INTO users (tg_id, username, sub_start, sub_end)
             SELECT {tg_id}, '{username}', datetime('now'), datetime('now','+5 hour')
             WHERE NOT EXISTS (SELECT 1 FROM users WHERE tg_id={tg_id});
+        ''')
+        
+        self.cursor.execute(f'''
+            UPDATE users
+            SET last_active = datetime('now')
+            WHERE tg_id={tg_id}
         ''')
         self.base_connection.commit()
         return self.get_user_by_tg_id(tg_id=tg_id)
@@ -98,14 +118,14 @@ class db_connect(object):
     
     
     def user_change_filter_price(self, tg_id, from_price=None, to_price=None):
-        if from_price:
+        if from_price != None:
             self.cursor.execute(f'''
                 UPDATE users
                 SET filter_start_price = {from_price}
                 WHERE tg_id = {tg_id};
             ''')
             
-        if to_price:
+        if to_price != None:
             self.cursor.execute(f'''
                 UPDATE users
                 SET filter_end_price = {to_price}

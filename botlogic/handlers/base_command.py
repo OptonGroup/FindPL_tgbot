@@ -7,7 +7,7 @@ from aiogram.types import (
     ReplyKeyboardRemove,
 )
 
-from botlogic.handlers.database_command import identification_user
+from botlogic.handlers.database_command import identification_user, check_sub_on_chanel
 from botlogic import components
 
 town_translate = {'москва': 'moskva', 'санкт-петербург': 'sankt-peterburg', 'новосибирск': 'novosibirsk', 'екатеринбург': 'ekaterinburg', 'казань': 'kazan', 'нижний новгород': 'nizhniy_novgorod', 'красноярск': 'krasnoyarsk', 'челябинск': 'chelyabinsk', 'самара': 'samara', 'уфа': 'ufa', 'ростов-на-дону': 'rostov-na-donu', 'краснодар': 'krasnodar', 'moskva': 'москва', 'sankt-peterburg': 'санкт-петербуг', 'novosibirsk': 'новосибирск', 'ekaterinburg': 'екатеринбург', 'kazan': 'казань', 'nizhniy_novgorod': 'нижний новгород', 'krasnoyarsk': 'красноярск', 'chelyabinsk': 'челябинск', 'samara': 'самара', 'ufa': 'уфа', 'rostov-na-donu': 'ростов-на-дону', 'krasnodar': 'краснодар'}
@@ -15,6 +15,9 @@ town_translate = {'москва': 'moskva', 'санкт-петербург': 'sa
 
 
 async def command_start_handler(message: Message, state: FSMContext) -> None:
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     await identification_user(message=message, state=state)
 
     user_info = await state.get_data()
@@ -23,28 +26,31 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
         reply_markup=components.keyboard
     )
     await message.answer(
-        f'''<b>-53% на первый месяц 🔥</b>
+        f'''<b>-25% на первый месяц 🔥</b>
 
 Если у вашего друга активна подписка, вы можете ввести его username (если нет username, попросите друга его id из профиля бота)
 
-Мы рады всем новым пользователям. Стоимость подписки по реферальной программе - 350 Telegram Stars ⭐️''',
+Мы рады всем новым пользователям. Стоимость подписки по реферальной программе - 150 Telegram Stars ⭐️''',
         reply_markup=components.start_button
     )
     
 
 async def get_info_handler(message: Message, state: FSMContext) -> None:
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
     user_info_text = f'''
-ℹ️ Профиль
+🤖 Профиль
 - - - - - - - - - - - - - - - - - - - - - - - -
 
-🕑 Подписка до <code>{user_info['sub_end']}</code>
+⭐️Подписка до <code>{user_info['sub_end']}</code>
 🌆Город поиска: <code>{town_translate[user_info['town_search']].capitalize()}</code>
-🔑 ID: <code>{user_info['tg_id']}</code>
-▫️ Username: <code>{user_info['username']}</code>
-⚙️ Фильтр по цене: <code>от {user_info["filter_start_price"]} рублей до {user_info["filter_end_price"]} рублей</code>
+🫵ID: <code>{user_info['tg_id']}</code>
+👤Username: <code>{user_info['username']}</code>
+⚙️Фильтр: <code>от {user_info["filter_start_price"]} рублей до {user_info["filter_end_price"]} рублей</code>
 
 - - - - - - - - - - - - - - - - - - - - - - - -
     '''

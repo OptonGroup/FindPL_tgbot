@@ -1,11 +1,19 @@
 import asyncio
 from dblogic.database import database
 from botlogic.settings import bot
+import logging
+from botlogic import components
 
-async def send_text(text):
-    for user in database.get_users():
+
+async def send_alarm_active():
+    for user in database.get_users_no_active():
         try:
-            await bot.send_message(chat_id=user[1], text=text)
+            logging.info(f'No active from user tg_id={user[1]}')
+            await bot.send_message(
+                chat_id=user[1],
+                text=f'''Вы не проявляли активность в течении 2х и более дней. Когда вы снова захотите получать уведомления - нажмите на кнопку ниже и они начнут приходить (это сделано в целях экономии пропускной способности)''',
+                reply_markup=components.start_work_button
+            )
         except:
             pass
 
@@ -20,7 +28,10 @@ async def send_ads(ads, town):
             await asyncio.sleep(0.07)
     
     
-    for user in database.get_users(town=town, sub_active=-1):
+    for user in database.get_users(town=town, sub_active=-1, last_active=True):
+        user_status = await bot.get_chat_member(chat_id=-1002080804090, user_id=user[1])
+        if user_status.status == 'left':
+            continue
         for ad in ads:
             try:
                 await bot.send_message(chat_id=user[1], text=ad[0])

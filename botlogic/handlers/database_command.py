@@ -21,6 +21,9 @@ town_translate = {'москва': 'moskva', 'санкт-петербург': 'sa
 
 
 async def identification_user(message: Message, state: FSMContext) -> None:
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     state_info = await state.get_data()
     if state_info.get('id', 0) != message.from_user.id:
         user_info = database.add_user(tg_id=message.from_user.id, username=message.from_user.username)
@@ -37,7 +40,8 @@ async def identification_user(message: Message, state: FSMContext) -> None:
             ref_voted = user_info[9],
             ref_data = user_info[10],
             filter_start_price = user_info[11],
-            filter_end_price = user_info[12]
+            filter_end_price = user_info[12],
+            last_active = user_info[13]
         )
         
 async def check_sub_on_chanel(message) -> bool:
@@ -49,22 +53,31 @@ async def check_sub_on_chanel(message) -> bool:
         return False
     return True
             
+       
+async def start_work_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
+    await identification_user(message=callback_query, state=state)
+    await bot.answer_callback_query(callback_query.id)
+    
+    
+    await bot.send_message(callback_query.from_user.id, 'Работа бота Возобновлена ✅')
+    
+    
         
 
 async def buy_sub_handler(message: Message, state: FSMContext) -> None:
-    # is_user_in_chanel = await check_sub_on_chanel(message=message)
-    # if not is_user_in_chanel:
-    #     return
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     await identification_user(message=message, state=state)
-    await message.answer('https://t.me/kvm_tg/14\nОплата через Telegram Stars ⭐️\n\nВы можете приобрести звезды через @PremiumBot')
+    await message.answer('Чтобы настроить <b>фильтры</b> - оформите <b>подписку за Telegram Stars</b> ⭐️\n<b>Фильтр</b> поможет вам настроить ценовой диапазон, это сильно упростит поиск нужной квартиры\n\nВы можете приобрести звезды через @PremiumBot')
     
-    sub_price = 750
+    sub_price = 200
     user_info = await state.get_data()
     if user_info['ref_activated']:
-        sub_price = 350
+        sub_price = 150
     
     await message.answer_invoice(
-            title="Подписка на бота",
+            title="Фильтры доступны по подписке",
             description="Активация подписки на 1 месяц",
             currency="XTR",
             is_flexible=False,
@@ -84,6 +97,9 @@ async def pre_checkout_query(pre_checkout_q: types.PreCheckoutQuery):
     
 
 async def successful_payment_handler(message: Message, state: FSMContext) -> None:
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     logging.info(f'SUCCESSFUL PAYMENT: tg_id={message.from_user.id}')
 
     await identification_user(message=message, state=state)	
@@ -105,6 +121,9 @@ async def successful_payment_handler(message: Message, state: FSMContext) -> Non
     
 
 async def get_town_keyboard_handler(message: Message, state: FSMContext) -> None:
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     await message.answer(
         f"Выберите город для поиска",
         reply_markup=ReplyKeyboardMarkup(
@@ -136,6 +155,9 @@ async def get_town_keyboard_handler(message: Message, state: FSMContext) -> None
     
     
 async def change_town_handler(message: Message, state: FSMContext) -> None:
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     await identification_user(message=message, state=state)
     database.user_change_city(tg_id=message.from_user.id, town=town_translate[message.text.lower()])
     await message.answer(
@@ -145,26 +167,65 @@ async def change_town_handler(message: Message, state: FSMContext) -> None:
     
 
 async def price_filter_handler(message: Message, state: FSMContext) -> None:
+    is_user_in_chanel = await check_sub_on_chanel(message=message)
+    if not is_user_in_chanel:
+        return
     await identification_user(message=message, state=state)
     user_info = await state.get_data()
     end_sub = datetime.datetime.strptime(user_info['sub_end'], '%Y-%m-%d %H:%M:%S')
     
     if datetime.datetime.now().now() < end_sub:
-        await message.answer('Введите цену от которой ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await message.answer(
+            'Введите <b>число</b>, без учета залога и лишних трат - <b>только ежемесячный платеж</b>\n\n<b>Минимальная</b> стоимость аренды:',
+            reply_markup=components.reset_button
+        )
         await state.set_state(components.Form.filter_start_price)
     else:
-        await message.answer('Фильтр цены - платная функция бота, чтобы ею воспользоваться нужно купить подпску')
-
+        await message.answer('Чтобы настроить <b>фильтры</b> - оформите <b>подписку за Telegram Stars</b> ⭐️\n\n<b>Фильтр</b> поможет вам настроить ценовой диапазон, это сильно упростит поиск нужной квартиры')
+        sub_price = 200
+        user_info = await state.get_data()
+        if user_info['ref_activated']:
+            sub_price = 150
+        
+        await message.answer_invoice(
+                title="Фильтры доступны по подписке",
+                description="Активация подписки на 1 месяц",
+                currency="XTR",
+                is_flexible=False,
+                prices=[
+                    types.LabeledPrice(
+                        label="Подписка на 1 месяц",
+                        amount=sub_price
+                    )
+                ],
+                start_parameter="one-month-subscription",
+                payload="test-invoice-payload"
+        )
+        
+        
+async def reset_filter(callback_query: CallbackQuery, state: FSMContext):
+    await bot.answer_callback_query(callback_query.id)
+    
+    database.user_change_filter_price(tg_id=callback_query.from_user.id, from_price=0, to_price=int(1e6))
+    await identification_user(message=callback_query, state=state)
+    user_info = await state.get_data()
+    await bot.send_message(callback_query.from_user.id, f'Теперь вы получаете уведомления о появлении новых квартир в ценовом диапазоне <code>от {user_info["filter_start_price"]} до {user_info["filter_end_price"]} рублей</code>')
+    await state.clear()
+    
+    
 
 async def price_filter_min(message: Message, state: FSMContext):
     min_price = message.text
     
     if min_price.isdigit():
         database.user_change_filter_price(tg_id=message.from_user.id, from_price=min_price)
-        await message.answer('Введите максимальную цену за которую ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await message.answer('<b>Максимальная</b> стоимость аренды:')
         await state.set_state(components.Form.filter_end_price)
     else:
-        await message.answer('Введите цену от которой ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await message.answer(
+            'Введите <b>число</b>, без учета залога и лишних трат - <b>только ежемесячный платеж</b>\n\n<b>Минимальная</b> стоимость аренды:',
+            reply_markup=components.reset_button    
+        )
         await state.set_state(components.Form.filter_start_price)
         
 
@@ -175,10 +236,10 @@ async def price_filter_max(message: Message, state: FSMContext):
         database.user_change_filter_price(tg_id=message.from_user.id, to_price=max_price)
         await identification_user(message=message, state=state)
         user_info = await state.get_data()
-        await message.answer(f'Фильтр поиска по квартирам установлен.\nВы получаете уведомления с квартирами <code>от {user_info["filter_start_price"]} до {user_info["filter_end_price"]} рублей</code>')
+        await message.answer(f'Теперь вы получаете уведомления о появлении новых квартир в ценовом диапазоне <code>от {user_info["filter_start_price"]} до {user_info["filter_end_price"]} рублей</code>')
         await state.clear()
     else:
-        await message.answer('Введите максимальную цену за которую ищите квартиру(формат цены - число без пробелов и других знаков)')
+        await message.answer('<b>Максимальная</b> стоимость аренды:')
         await state.set_state(components.Form.filter_end_price)
 
 

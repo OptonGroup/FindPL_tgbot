@@ -31,7 +31,7 @@ async def admin_commands_handler(message: Message, state: FSMContext) -> None:
     await identification_user(message=message, state=state)
         
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
         
     await message.answer(
@@ -57,7 +57,7 @@ async def get_user_by_id_handler(message: Message, state: FSMContext, command: C
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
     
     user_id = command.args
@@ -90,7 +90,7 @@ async def get_user_by_username_handler(message: Message, state: FSMContext, comm
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
     
     username = command.args
@@ -124,7 +124,7 @@ async def give_admin_handler(message: Message, state: FSMContext, command: Comma
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
     
     user_id = command.args
@@ -152,7 +152,7 @@ async def remove_admin_handler(message: Message, state: FSMContext, command: Com
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
     
     user_id = command.args
@@ -180,13 +180,13 @@ async def get_users_handler(message: Message, state: FSMContext) -> None:
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
     
     data = []
     for row in database.get_users():
         data.append([element for element in row])
-    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search', 'ref_activated', 'ref_voted', 'ref_data', 'filter_start_price', 'filter_end_price']
+    head = ['id', 'tg_id', 'username', 'is_admin', 'sub_start', 'sub_end', 'pay_money', 'town_search', 'ref_activated', 'ref_voted', 'ref_data', 'filter_start_price', 'filter_end_price', 'last_active']
          
     with open('files/users_info.txt', 'w', encoding='utf-8') as file:
         file.write(tabulate(data, headers=head, tablefmt="grid"))
@@ -199,7 +199,7 @@ async def get_logs_handler(message: Message, state: FSMContext) -> None:
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
     
     document = FSInputFile('info.log')
@@ -211,7 +211,7 @@ async def give_sub_handler(message: Message, state: FSMContext, command: Command
     await identification_user(message=message, state=state)
     
     user_info = await state.get_data()
-    if not user_info['is_admin']:
+    if not user_info.get('is_admin', False):
         return
     
     user_id = command.args
@@ -237,4 +237,4 @@ async def give_sub_handler(message: Message, state: FSMContext, command: Command
 async def pass_test_com(message: Message, state: FSMContext) -> None:
     from botlogic.functions import functions
     
-    await functions.send_text(text='Уважаемый пользователь! Сейчас бот находится под большой нагрузкой, поэтому некоторые объявления могут приходить с задержкой. Наша команда активно работает над исправлением данной ситуацией')
+    await functions.send_text(text='Test')
