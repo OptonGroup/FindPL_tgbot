@@ -88,7 +88,7 @@ class db_connect(object):
     def add_user(self, tg_id, username):
         self.cursor.execute(f'''
             INSERT INTO users (tg_id, username, sub_start, sub_end)
-            SELECT {tg_id}, '{username}', datetime('now'), datetime('now','+5 hour')
+            SELECT {tg_id}, '{username}', datetime('now'), datetime('now','-1 hour')
             WHERE NOT EXISTS (SELECT 1 FROM users WHERE tg_id={tg_id});
         ''')
         

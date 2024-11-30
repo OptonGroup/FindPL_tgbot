@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 from datetime import datetime
-from fake_headers import Headers
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup

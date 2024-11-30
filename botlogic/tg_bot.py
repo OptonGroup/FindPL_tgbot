@@ -53,11 +53,13 @@ async def start_bot():
     dp.message.register(admin_command.get_users_handler, Command('get_users_info'))
     dp.message.register(admin_command.get_logs_handler, Command('get_logs'))
     dp.message.register(admin_command.give_sub_handler, Command('give_sub'))
+    dp.message.register(admin_command.add_new_agent_handler, Command(commands=["add_new_agent"]))
+    dp.message.register(admin_command.get_keys_handler, Command(commands=["get_agent"]))
     
     dp.message.register(admin_command.pass_test_com, Command('pass_test_com'))
     
-    dp.callback_query.register(database_command.process_callback_button_ref, lambda query: query.data == 'add_referral')
-    dp.message.register(database_command.capture_referral_username, StateFilter(components.Form.referral_username))
+    dp.callback_query.register(database_command.process_callback_button_key, lambda query: query.data == 'add_key')
+    dp.message.register(database_command.process_product_key, StateFilter(components.Form.product_key))
         
     dp.callback_query.register(database_command.start_work_handler, lambda query: query.data == 'start_work')
     await dp.start_polling(bot)
