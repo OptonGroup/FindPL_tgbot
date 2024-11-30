@@ -10,22 +10,19 @@ keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="🤖 Профиль"),
-            KeyboardButton(text="⭐️ Подписка"),
-        ],
-        [
             KeyboardButton(text="🏙 Город"),
-            KeyboardButton(text="💬 Помощь"),
         ],
         [
+            KeyboardButton(text="💬 Помощь"),
             KeyboardButton(text="⚙️ Фильтр"),
-        ]
+        ],
     ],
     resize_keyboard=True
 )
 
 
 inline_start_list = [
-    [InlineKeyboardButton(text="Ввести username друга", callback_data='add_referral')],
+    [InlineKeyboardButton(text="Ввести оплаченный ключ", callback_data='add_key')],
 ]
 start_button = InlineKeyboardMarkup(inline_keyboard=inline_start_list)
 
@@ -41,6 +38,6 @@ start_work_button = InlineKeyboardMarkup(inline_keyboard=start_work_list)
 
 
 class Form(StatesGroup):
-    referral_username = State()
+    product_key = State()  # For product key validation
     filter_start_price = State()
     filter_end_price = State()

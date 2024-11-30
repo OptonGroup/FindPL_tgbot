@@ -18,23 +18,14 @@ async def send_alarm_active():
             pass
 
 async def send_ads(ads, town):
-    for user in database.get_users(town=town, sub_active=1):
-        for ad in ads:
-            try:
-                if user[11] <= ad[1] <= user[12]:
-                    await bot.send_message(chat_id=user[1], text=ad[0])
-            except:
-                pass
-            await asyncio.sleep(0.07)
-    
-    
-    for user in database.get_users(town=town, sub_active=-1, last_active=True):
+    for user in database.get_users(town=town, sub_active=1, last_active=True):
         user_status = await bot.get_chat_member(chat_id=-1002080804090, user_id=user[1])
         if user_status.status == 'left':
             continue
         for ad in ads:
             try:
-                await bot.send_message(chat_id=user[1], text=ad[0])
+                if user[11] <= ad[1] <= user[12]:
+                    await bot.send_message(chat_id=user[1], text=ad[0])
             except:
                 pass
             await asyncio.sleep(0.07)

@@ -15,9 +15,12 @@ from aiogram.types import (
 )
 
 import datetime 
+from classes.product_key import ProductKeyManager
+
 
 
 town_translate = {'москва': 'moskva', 'санкт-петербург': 'sankt-peterburg', 'новосибирск': 'novosibirsk', 'екатеринбург': 'ekaterinburg', 'казань': 'kazan', 'нижний новгород': 'nizhniy_novgorod', 'красноярск': 'krasnoyarsk', 'челябинск': 'chelyabinsk', 'самара': 'samara', 'уфа': 'ufa', 'ростов-на-дону': 'rostov-na-donu', 'краснодар': 'krasnodar', 'moskva': 'москва', 'sankt-peterburg': 'санкт-петербуг', 'novosibirsk': 'новосибирск', 'ekaterinburg': 'екатеринбург', 'kazan': 'казань', 'nizhniy_novgorod': 'нижний новгород', 'krasnoyarsk': 'красноярск', 'chelyabinsk': 'челябинск', 'samara': 'самара', 'ufa': 'уфа', 'rostov-na-donu': 'ростов-на-дону', 'krasnodar': 'краснодар'}
+product_key_manager = ProductKeyManager()
 
 
 async def identification_user(message: Message, state: FSMContext) -> None:
@@ -45,6 +48,7 @@ async def identification_user(message: Message, state: FSMContext) -> None:
         )
         
 async def check_sub_on_chanel(message) -> bool:
+    return True
     user_status = await bot.get_chat_member(chat_id=-1002080804090, user_id=message.from_user.id)
     if user_status.status == 'left':
         await message.answer(
@@ -243,45 +247,23 @@ async def price_filter_max(message: Message, state: FSMContext):
         await state.set_state(components.Form.filter_end_price)
 
 
-async def process_callback_button_ref(callback_query: CallbackQuery, state: FSMContext):
+async def process_callback_button_key(callback_query: CallbackQuery, state: FSMContext):
     await identification_user(message=callback_query, state=state)
     await bot.answer_callback_query(callback_query.id)
     
     user_info = await state.get_data()
-    if user_info['ref_voted']:
-        await bot.send_message(callback_query.from_user.id, 'Вы уже вводили данные своего друга')
-        return
     
-    await bot.send_message(callback_query.from_user.id, 'Вводить username или 🔑 ID друга. username нужно вводить текстом без @. 🔑 ID вводить только числом')
-    await state.set_state(components.Form.referral_username)
-    
-    
-async def capture_referral_username(message: Message, state: FSMContext):
-    referral = message.text
-    
-    await identification_user(message=message, state=state)
-    user_info = await state.get_data()
-    if referral.isdigit():
-        if len(database.get_users(tg_id=referral, sub_active=1)):
-            await message.answer(
-                f'''Пользователь найден.\nСтоимость подписки изменена.'''
-            )
-            database.user_set_ref(tg_id=user_info['tg_id'], ref=referral)
-            
-        else:
-            await message.answer(
-                f'''Пользователь с ID={referral} не найден или у пользователя не активна подписка\nВвести данные друга вы сможете ещё раз по команде /start'''
-            )
-    else:
-        if len(database.get_users(username=referral, sub_active=1)):
-            await message.answer(
-                f'''Пользователь найден.\nСтоимость подписки изменена.'''
-            )
-            database.user_set_ref(tg_id=user_info['tg_id'], ref=referral)
-            
-        else:
-            await message.answer(
-                f'''Пользователь с username={referral} не найден или у пользователя не активна подписка\nВвести данные друга вы сможете ещё раз по команде /start'''
-            )
+    await bot.send_message(callback_query.from_user.id, 'Введите свой ключ продукта:')
+    await state.set_state(components.Form.product_key)
 
-    await state.clear()
+
+async def process_product_key(message: Message, state: FSMContext):
+    await identification_user(message=message, state=state)
+    key = message.text
+    username = message.from_user.username or str(message.from_user.id)
+    
+    if product_key_manager.activate_key(key, username):
+        database.user_renew_subscription(message.from_user.id, 0)
+        await message.answer("Ключ введён верно. Доступ активрован")
+    else:
+        await message.answer("Неправильный ключ. Попробуйте ещё раз или обратитесь к агенту у которого покупали ключ")

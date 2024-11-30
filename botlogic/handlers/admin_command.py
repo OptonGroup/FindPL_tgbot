@@ -13,6 +13,7 @@ from tabulate import tabulate
 
 from botlogic.handlers.base_command import identification_user
 from botlogic import components
+from classes.product_key import ProductKeyManager
 
 
 
@@ -238,3 +239,41 @@ async def pass_test_com(message: Message, state: FSMContext) -> None:
     from botlogic.functions import functions
     
     await functions.send_text(text='Test')
+    
+    
+    
+product_key_manager = ProductKeyManager()
+
+async def add_new_agent_handler(message: Message, state: FSMContext, command: CommandObject) -> None:
+    await identification_user(message=message, state=state)
+    
+    user_info = await state.get_data()
+    if not user_info.get('is_admin', False):
+        return
+
+    if not command.args:
+        await message.answer("Введите команду в формате: /add_new_agent [имя агента]")
+        return
+
+    agent_name = command.args
+    try:
+        filename = product_key_manager.create_agent_keys_file(agent_name)
+        document = FSInputFile(filename)
+        await message.answer_document(document, reply_markup=components.keyboard)
+    except Exception as e:
+        logging.error(f"Error generating product keys: {e}")
+        await message.answer("Ошибка генерации ключей. Попробуйте позже")
+        
+
+async def get_keys_handler(message: Message, state: FSMContext, command: CommandObject) -> None:
+    await identification_user(message=message, state=state)
+    user_info = await state.get_data()
+    if not user_info.get('is_admin', False):
+        return
+    
+    
+    agent_name = command.args
+
+    document = FSInputFile(f'agents/{agent_name}.json')
+    await message.answer_document(document, reply_markup=components.keyboard)
+    document = ''
