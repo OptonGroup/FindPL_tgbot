@@ -48,7 +48,6 @@ async def identification_user(message: Message, state: FSMContext) -> None:
         )
         
 async def check_sub_on_chanel(message) -> bool:
-    return True
     user_status = await bot.get_chat_member(chat_id=-1002080804090, user_id=message.from_user.id)
     if user_status.status == 'left':
         await message.answer(

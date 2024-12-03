@@ -22,7 +22,7 @@ keyboard = ReplyKeyboardMarkup(
 
 
 inline_start_list = [
-    [InlineKeyboardButton(text="Ввести оплаченный ключ", callback_data='add_key')],
+    [InlineKeyboardButton(text="Ввести ключ", callback_data='add_key')],
 ]
 start_button = InlineKeyboardMarkup(inline_keyboard=inline_start_list)
 

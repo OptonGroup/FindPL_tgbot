@@ -7,6 +7,6 @@ from aiogram.enums import ParseMode
 
 @dataclass
 class Secrets:
-    token: str = '7497797045:AAHHsuWNMyahGPl2SmMVHtLV0aE9wfSVs3M'
+    token: str = '7524225732:AAG-7O-riqPfQ4uQGUa47GxJc28KSH4r5nM'
 
 bot = Bot(token=Secrets.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))

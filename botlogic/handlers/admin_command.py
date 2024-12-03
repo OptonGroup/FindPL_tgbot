@@ -274,6 +274,6 @@ async def get_keys_handler(message: Message, state: FSMContext, command: Command
     
     agent_name = command.args
 
-    document = FSInputFile(f'agents/{agent_name}.json')
+    document = FSInputFile(f'agents/{agent_name}.json')        
     await message.answer_document(document, reply_markup=components.keyboard)
     document = ''
