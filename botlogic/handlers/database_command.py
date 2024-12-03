@@ -212,7 +212,7 @@ async def reset_filter(callback_query: CallbackQuery, state: FSMContext):
     database.user_change_filter_price(tg_id=callback_query.from_user.id, from_price=0, to_price=int(1e6))
     await identification_user(message=callback_query, state=state)
     user_info = await state.get_data()
-    await bot.send_message(callback_query.from_user.id, f'Теперь вы получаете уведомления о появлении новых квартир в ценовом диапазоне <code>от {user_info["filter_start_price"]} до {user_info["filter_end_price"]} рублей</code>')
+    await bot.send_message(callback_query.from_user.id, "Ценовой диапазон сброшен.\nВы получаете уведомления о появлении всех новых квартир")
     await state.clear()
     
     
@@ -239,7 +239,7 @@ async def price_filter_max(message: Message, state: FSMContext):
         database.user_change_filter_price(tg_id=message.from_user.id, to_price=max_price)
         await identification_user(message=message, state=state)
         user_info = await state.get_data()
-        await message.answer(f'Теперь вы получаете уведомления о появлении новых квартир в ценовом диапазоне <code>от {user_info["filter_start_price"]} до {user_info["filter_end_price"]} рублей</code>')
+        await message.answer(f'Фильтр обновлен.\nВы получаете уведомления в диапазоне:\n{user_info["filter_start_price"]} - {user_info["filter_end_price"]} ₽')
         await state.clear()
     else:
         await message.answer('<b>Максимальная</b> стоимость аренды:')
@@ -252,7 +252,7 @@ async def process_callback_button_key(callback_query: CallbackQuery, state: FSMC
     
     user_info = await state.get_data()
     
-    await bot.send_message(callback_query.from_user.id, 'Введите свой ключ продукта:')
+    await bot.send_message(callback_query.from_user.id, 'Введите ключ продукта:')
     await state.set_state(components.Form.product_key)
 
 
@@ -263,6 +263,6 @@ async def process_product_key(message: Message, state: FSMContext):
     
     if product_key_manager.activate_key(key, username):
         database.user_renew_subscription(message.from_user.id, 0)
-        await message.answer("Ключ введён верно. Доступ активрован")
+        await message.answer("Доступ к базе активирован.\nУдачного поиска")
     else:
-        await message.answer("Неправильный ключ. Попробуйте ещё раз или обратитесь к агенту у которого покупали ключ")
+        await message.answer("Ключ недействителен.\nПроверьте правильность набора. Обратитесь в поддержку: @kvmtg")
